@@ -26,14 +26,12 @@ def convert_duration(duration):
 
 def handle_row(row):
     ts = normalize_timestamp(row['Timestamp'])
-    address = row['Address']
     zip_code = row['ZIP'].rjust(5, '0')
     name = row['FullName'].upper()
     foo_duration = convert_duration(row['FooDuration'])
     bar_duration = convert_duration(row['BarDuration'])
     total_duration = foo_duration + bar_duration
     row['Timestamp'] = ts
-    row['Address'] = address
     row['ZIP'] = zip_code
     row['FullName'] = name
     row['FooDuration'] = foo_duration

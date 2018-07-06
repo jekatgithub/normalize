@@ -1,0 +1,28 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+itsdangerous = "*"
+logilab-astng = "*"
+logilab-common = "*"
+pbr = "*"
+pylint = "*"
+six = "*"
+stevedore = "*"
+virtualenv = "*"
+virtualenv-clone = "*"
+virtualenvwrapper = "*"
+Django = "*"
+Flask = "*"
+"Jinja2" = "*"
+MarkupSafe = "*"
+Werkzeug = "*"
+ipython = "*"
+pytz = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.6"

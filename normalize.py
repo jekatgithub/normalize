@@ -15,15 +15,51 @@ def normalize_timestamp(time_string):
     pt = pacific.localize(dt)
     # convert to 'US/Eastern'
     et = pt.astimezone(eastern)
+    # this will return an ISO 8601 formatted timestamp with no timezone!
+    # I'm not appending an offset because US/Eastern is not guaranteed to be a
+    # constant number of hours offset from UTC
     return et.isoformat()
 
+def convert_duration(duration):
+    hours, minutes, seconds = duration.split(':')
+    hours_secs = int(hours) * 60 * 60
+    minutes_secs = int(minutes) * 60
+    seconds_float = float(seconds)
+    return hours_secs + minutes_secs + seconds_float
+
+def handle_row(row):
+    ts = normalize_timestamp(row['Timestamp'])
+    address = row['Address']
+    zip_code = row['ZIP'].rjust(5, '0')
+    name = row['FullName'].upper()
+    foo_duration = convert_duration(row['FooDuration'])
+    bar_duration = convert_duration(row['BarDuration'])
+    total_duration = foo_duration + bar_duration
+    row['Timestamp'] = ts
+    row['Address'] = address
+    row['ZIP'] = zip_code
+    row['FullName'] = name
+    row['FooDuration'] = foo_duration
+    row['BarDuration'] = bar_duration
+    row['TotalDuration'] = total_duration
+    return row
 
 
 def main():
     input_bytes = bytes(sys.stdin.buffer.read())
     input_unicode = input_bytes.decode('utf-8', 'replace')
-    for row in csv.DictReader(input_unicode.split('\n')):
-        print(row)
+    normalized_rows = []
+    reader = csv.DictReader(input_unicode.split('\n'))
+    for row in reader:
+        try:
+            new_row = handle_row(row)
+            normalized_rows.append(new_row)
+        except:
+            sys.stderr.write('Error parsing row!\n')
+    writer = csv.DictWriter(sys.stdout, fieldnames=reader.fieldnames)
+    writer.writeheader()
+    for normalized_row in normalized_rows:
+        writer.writerow(normalized_row)
     #print(input_bytes)
     #for i in input_bytes:
     #    print(type(i))
